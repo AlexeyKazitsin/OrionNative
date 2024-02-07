@@ -14,7 +14,7 @@ import {StyleSheet} from 'react-native'
 export default function AstronautCard({navigation, ...props}) {
 
     const handlePress = () => {
-        //navigation.navigate('Астронавт', {id: props.astronaut_id}) для мэйн бэка
+        //navigation.navigate('Астронавт', {id: props.astronaut_id}) 
         navigation.navigate('Астронавт', {id: props.id})
     }
     return (
@@ -29,7 +29,7 @@ export default function AstronautCard({navigation, ...props}) {
                 <Text style={styles.brandTitle}>{props.name}</Text>
                 <View>
                     <Text style={styles.text}>Пол: {props.sex}</Text>
-                    <Text style={styles.text}>Страна: {props.country}</Text>
+                    <Text style={styles.text}>Возраст: {props.age}</Text>
                 </View>
             </View>
             <TouchableOpacity
@@ -51,7 +51,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         height: 200,
-        backgroundColor: 'rgb(192, 134, 213)',
+        backgroundColor: '#5469A3',
         borderRadius: 12,
         marginBottom: 20,
     },
@@ -77,13 +77,15 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: 'bold',
         marginBottom: 15,
+        color: "white"
     },
     text: {
         fontSize: 16,
         marginBottom: 8,
+        color: "white"
     },
     btn: {
-        backgroundColor: 'rgb(142, 58, 172)',
+        backgroundColor: '#1A3581',
         padding: 5,
         borderRadius: 5,
         display: "flex",

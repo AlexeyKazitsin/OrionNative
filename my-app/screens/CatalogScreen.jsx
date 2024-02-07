@@ -1,4 +1,4 @@
-import { View, Text, Button, SafeAreaView, ScrollView, TextInput} from 'react-native';   
+import { View, Text, Button, SafeAreaView, ScrollView, TextInput, TouchableOpacity} from 'react-native';   
 import {StyleSheet} from 'react-native'
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector} from 'react-redux';
@@ -16,17 +16,25 @@ export default function CatalogScreen({ navigation }) {
 
 
     const [searchQuery, setSearchQuery] = useState('');
+    const [sexQuery, setSexQuery] = useState('');
 
     const handleSearch = (query) => {
         setSearchQuery(query);
     }
+
+    const handleSexFilter = (sexquery) => {
+        setSexQuery(sexquery)
+    }
+    const sexes = ["Мужской", "Женский"];
+
+
 
 
     //с помощью useEffect делаем запрос на бэк и вытягиваем данные об астронавтах (асинхронно)
     useEffect(()=> {
         async function getAllAstronauts() {
             //const response = await axios.get(`${URI}/astronauts/?search=${searchQuery}`); для мейн бека
-            const response = await axios.get(`${URI}/api/astronauts/search/?query=${searchQuery}`);
+            const response = await axios.get(`${URI}/api/astronauts/search/?query=${searchQuery}&sexquery=${sexQuery}`);
             const updatedAstronauts = response.data.astronauts.map((astronaut)=>({
                 ...astronaut,
                 image: astronaut.image.replace("http://127.0.0.1:9000", `${URI_minio}`)
@@ -39,7 +47,7 @@ export default function CatalogScreen({ navigation }) {
 
         getAllAstronauts();
         //console.log("GetAstronauts");
-    }, [searchQuery, dispatch]) //от чего зависит useEffect 
+    }, [searchQuery, sexQuery, dispatch]) //от чего зависит useEffect 
 
 
     return ( //Оборачиваем в SafeAreView и меняем View на ScrollView чтобы можно было скроллить экран
@@ -52,6 +60,29 @@ export default function CatalogScreen({ navigation }) {
                     onChangeText={(text) => handleSearch(text)}
                 />
             </View>
+
+
+            <View style={{width: "94%"}}>
+                <View style={styles.filters}>
+                    {sexes.map((sex, index)=> (
+                        <TouchableOpacity
+                            key={index}
+                            style={sexQuery === sex ? styles.selectefFilterButton : styles.filterButton}
+                            onPress = {() => handleSexFilter(sex)}
+                        >
+                            <Text style={styles.filterButtonText}>
+                                {sex}
+                            </Text>
+                        </TouchableOpacity>
+                    ))}
+                </View>
+                <TouchableOpacity style={styles.btn} onPress={() => handleSexFilter('')}>
+                    <Text style={styles.btnText}>Сбросить</Text>
+                </TouchableOpacity>
+            </View>
+
+
+
             <ScrollView style={styles.scroll_view}>
                 {astronauts.map((astronaut) => ( // в мап всех астронавтов кладем CardAstronaut (там прокидываем пропсы)
                     <AstronautCard key={astronaut.astronaut_id} {...astronaut} navigation={navigation}/> //... распыляет свойства обьекта
@@ -101,6 +132,17 @@ const styles = StyleSheet.create({
     filterButtonText: {
         fontWeight: "normal",
         fontSize: 12, 
+    },
+    btn: {
+        backgroundColor: 'dodgerblue',
+        padding: 5,
+        borderRadius: 5,
+        display: "flex",
+        alignItems: "center",
+        marginTop: 10
+    },
+    btnText: {
+        color: 'white'
     }
 
 })
